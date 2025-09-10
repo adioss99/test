@@ -22,6 +22,15 @@
                             <td>:</td>
                             <td>{{$data->nama}}</td>
                         </tr>
+                        <tr>
+                            <th>Item</th>
+                            <td>:</td>
+                            <td>
+                                @foreach($data->masterItems as $item)
+                                {{$item->nama}}, 
+                                @endforeach
+                            </td>
+                        </tr>
                     </table>
                     <a class="btn btn-info" href="{{url('category-items/form/edit')}}/{{$data->id}}">Edit</a>
                     <a class="btn btn-danger" href="{{url('category-items/delete')}}/{{$data->id}}" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>

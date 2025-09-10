@@ -52,7 +52,17 @@
             <optio @if($selected == 'ATK') selected @endif>ATK</option>
         </select>
     </div>
-
+    <div class="form-group">
+        <label>Kategori</label>
+        @foreach($categories as $category)
+        <div class="form-check">
+            <input class="form-check-input" name="kategori_id[]" type="checkbox" value="{{ $category->id }}" id="checkbox{{ $category->id }}" {{ isset($item) && $item->category->contains($category->id) ? 'checked' : '' }}>
+            <label class="form-check-label" for="checkbox{{ $category->id }}">
+                {{ $category->nama }} ({{ $category->kode }})
+            </label>
+        </div>
+        @endforeach
+    </div>
     <button class="btn btn-primary mt-3">Submit</button>
 
 </form>

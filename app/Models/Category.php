@@ -11,4 +11,8 @@ class Category extends Model
 
     protected $table = 'category';
 
+    public function masterItems()
+    {
+        return $this->belongsToMany(MasterItem::class, 'item_category_pivot', 'category_id', 'master_item_id');
+    }
 }

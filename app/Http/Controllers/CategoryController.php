@@ -48,7 +48,7 @@ class CategoryController extends Controller
 
     public function singleView($kode)
     {
-        $data['data'] = Category::where('kode', $kode)->first();
+        $data['data'] = Category::with('masterItems')->where('kode', $kode)->first();
         return view('category.single.index', $data);
     }
 
