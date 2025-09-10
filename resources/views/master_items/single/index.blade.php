@@ -13,6 +13,11 @@
                 <div class="card-body">
                     <table>
                         <tr>
+                            @if($data->photo)
+                                <img src="{{asset('storage/'.$data->photo)}}" alt="" class="w-25">
+                            @endif
+                        </tr>
+                        <tr>
                             <th>Nama</th>
                             <td>:</td>
                             <td>{{$data->nama}}</td>

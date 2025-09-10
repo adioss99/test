@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MasterItemsController extends Controller
 {
@@ -23,7 +24,8 @@ class MasterItemsController extends Controller
 
         if (!empty($kode)) $data_search = $data_search->where('kode', $kode);
         if (!empty($nama)) $data_search = $data_search->where('nama', 'LIKE', '%' . $nama . '%');
-        if (!empty($hargamin)) $data_search = $data_search->where('harga_beli', '>=', $hargamin)->where('harga_beli', '<=', $hargamax);
+        if (!empty($hargamin)) $data_search = $data_search->where('harga_beli', '>=', $hargamin);
+        if (!empty($hargamax)) $data_search = $data_search->where('harga_beli', '<=', $hargamax);
 
         $data_search = $data_search->select('kode', 'nama', 'jenis', 'harga_beli', 'laba', 'supplier')->orderBy('id')->get();
 
@@ -56,13 +58,31 @@ class MasterItemsController extends Controller
     {
         if ($method == 'new') {
             $data_item = new MasterItem;
-            $kode = MasterItem::count('id');
-            $kode = $kode + 1;
-            $kode = str_pad($kode, 5, '0', STR_PAD_LEFT);
-            sleep(3);
+            $last = $data_item->orderBy('id', 'desc')->first();
+            if ($last) {
+                $lastKode = intval($last->kode);
+                $kode = str_pad($lastKode + 1, 5, '0', STR_PAD_LEFT);
+            } else {
+                $kode = str_pad(1, 5, '0', STR_PAD_LEFT);
+            }
+            while ($data_item->where('kode', $kode)->exists()) {
+                $lastKode++;
+                $kode = str_pad($lastKode + 1, 5, '0', STR_PAD_LEFT);
+            }
+            $path = null;
+            if ($request->hasFile('photo')) {
+                $path = $request->file('photo')->store('items', 'public');
+                $data_item->photo = $path;
+            }
         } else {
             $data_item = MasterItem::find($id);
             $kode = $data_item->kode;
+            if ($request->hasFile('photo')) {
+                if ($data_item->photo && Storage::disk('public')->exists($data_item->photo)) {
+                    Storage::disk('public')->delete($data_item->photo);
+                }
+                $data_item->photo = $request->file('photo')->store('items', 'public');
+            }
         }
 
         $data_item->nama = $request->nama;
@@ -71,6 +91,7 @@ class MasterItemsController extends Controller
         $data_item->kode = $kode;
         $data_item->supplier = $request->supplier;
         $data_item->jenis = $request->jenis;
+
         $data_item->save();
 
         return redirect('master-items');
@@ -78,20 +99,24 @@ class MasterItemsController extends Controller
 
     public function delete($id)
     {
-        MasterItem::find($id)->delete();
+        $item = MasterItem::find($id);
+        if ($item->photo && Storage::disk('public')->exists($item->photo)) {
+            Storage::disk('public')->delete($item->photo);
+            # code...
+        }
+        $item->delete();
         return redirect('master-items');
     }
 
     public function updateRandomData()
     {
         $data = MasterItem::get();
-        foreach($data as $item)
-        {
+        foreach ($data as $item) {
             $kode = $item->id;
             $kode = str_pad($kode, 5, '0', STR_PAD_LEFT);
 
-            $item->harga_beli = rand(100,1000000);
-            $item->laba = rand(10,99);
+            $item->harga_beli = rand(100, 1000000);
+            $item->laba = rand(10, 99);
             $item->kode = $kode;
             $item->supplier = $this->getRandomSupplier();
             $item->jenis = $this->getRandomJenis();
@@ -101,15 +126,15 @@ class MasterItemsController extends Controller
 
     private function getRandomSupplier()
     {
-        $array = ['Tokopaedi','Bukulapuk','TokoBagas','E Commurz','Blublu'];
-        $random = rand(0,4);
+        $array = ['Tokopaedi', 'Bukulapuk', 'TokoBagas', 'E Commurz', 'Blublu'];
+        $random = rand(0, 4);
         return $array[$random];
     }
 
     private function getRandomJenis()
     {
-        $array = ['Obat','Alkes','Matkes','Umum','ATK'];
-        $random = rand(0,4);
+        $array = ['Obat', 'Alkes', 'Matkes', 'Umum', 'ATK'];
+        $random = rand(0, 4);
         return $array[$random];
     }
 }
