@@ -56,7 +56,11 @@
                                 >
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Category Items</a>
+                                <a
+                                    class="nav-link"
+                                    href="{{ url('category-items') }}"
+                                    >Category Items</a
+                                >
                             </li>
                         </ul>
                         @endauth

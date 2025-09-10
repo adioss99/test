@@ -30,5 +30,14 @@ Route::post('/master-items/form/{method}/{id?}', [App\Http\Controllers\MasterIte
 Route::get('/master-items/view/{kode}', [App\Http\Controllers\MasterItemsController::class, 'singleView']);
 Route::get('/master-items/delete/{id}', [App\Http\Controllers\MasterItemsController::class, 'delete']);
 
+Route::get('/category-items', [App\Http\Controllers\CategoryController::class, 'index']);
+Route::get('/category-items/search', [App\Http\Controllers\CategoryController::class, 'search']);
+Route::get('/category-items/form/{method}/{id?}', [App\Http\Controllers\CategoryController::class, 'formView']);
+Route::post('/category-items/form/{method}/{id?}', [App\Http\Controllers\CategoryController::class, 'formSubmit']);
+
+Route::get('/category-items/view/{kode}', [App\Http\Controllers\CategoryController::class, 'singleView']);
+Route::get('/category-items/delete/{id}', [App\Http\Controllers\CategoryController::class, 'delete']);
+
+
 
 Route::get('/master-items/update-random-data', [App\Http\Controllers\MasterItemsController::class, 'updateRandomData']);
