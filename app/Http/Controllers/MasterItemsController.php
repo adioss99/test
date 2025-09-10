@@ -48,6 +48,7 @@ class MasterItemsController extends Controller
         $data['categories'] = Category::all();
         $data['item'] = $item;
         $data['method'] = $method;
+
         return view('master_items.form.index', $data);
     }
 

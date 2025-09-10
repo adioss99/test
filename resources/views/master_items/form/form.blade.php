@@ -9,7 +9,7 @@
 
     <div class="form-group">
         <label>Gambar</label>
-        <input type="file" class="form-control" name="photo" value="{{$item->photo ?? ''}}">
+        <input type="file" class="form-control" name="photo" accept="image/*" value="{{$item->photo ?? ''}}">
     </div>
 
     <div class="form-group">
@@ -56,9 +56,9 @@
         <label>Kategori</label>
         @foreach($categories as $category)
         <div class="form-check">
-            <input class="form-check-input" name="kategori_id[]" type="checkbox" value="{{ $category->id }}" id="checkbox{{ $category->id }}" {{ isset($item) && $item->category->contains($category->id) ? 'checked' : '' }}>
+            <input class="form-check-input" name="kategori_id[]" type="checkbox" value="{{ $category->id }}" id="checkbox{{ $category->id }}" {{ ($method == 'edit' && isset($item) && $item->category->contains($category->id)) ? 'checked' : '' }}>
             <label class="form-check-label" for="checkbox{{ $category->id }}">
-                {{ $category->nama }} ({{ $category->kode }})
+                ({{ $category->kode }}) {{ $category->nama }}
             </label>
         </div>
         @endforeach
