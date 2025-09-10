@@ -80,7 +80,10 @@ class CategoryController extends Controller
             }
             $kode = $data_item->kode;
         }
-        
+        $request->validate([
+            'nama' => 'required',
+            'kode' => 'required',
+        ]);
         $data_item->kode = $kode;
         $data_item->nama = $request->nama;
 

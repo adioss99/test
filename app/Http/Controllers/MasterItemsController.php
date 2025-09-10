@@ -103,7 +103,14 @@ class MasterItemsController extends Controller
                 $data_item->photo = $request->file('photo')->store('items', 'public');
             }
         }
-
+        $request->validate([
+            'nama' => 'required',
+            'harga_beli' => 'required | numeric',
+            'laba' => 'required | numeric',
+            'kode' => 'required',
+            'supplier' => 'required',
+            'jenis' => 'required',
+        ]);
         $data_item->nama = $request->nama;
         $data_item->harga_beli = $request->harga_beli;
         $data_item->laba = $request->laba;
