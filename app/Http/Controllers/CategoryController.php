@@ -39,6 +39,9 @@ class CategoryController extends Controller
             $item = [];
         } else {
             $item = Category::find($id);
+            if (!$item) {
+                return redirect('category-items');
+            }
         }
         $data['item'] = $item;
         $data['method'] = $method;
@@ -49,6 +52,9 @@ class CategoryController extends Controller
     public function singleView($kode)
     {
         $data['data'] = Category::with('masterItems')->where('kode', $kode)->first();
+        if (!$data['data']) {
+            return redirect('category-items');
+        }
         return view('category.single.index', $data);
     }
 
@@ -69,6 +75,9 @@ class CategoryController extends Controller
             }
         } else {
             $data_item = Category::find($id);
+            if (!$data_item) {
+                return redirect('category-items');
+            }
             $kode = $data_item->kode;
         }
         
@@ -83,6 +92,9 @@ class CategoryController extends Controller
     public function delete($id)
     {
         $item = Category::find($id);
+        if (!$item) {
+            return redirect('category-items');
+        }
         $item->delete();
         return redirect('category-items');
     }

@@ -43,6 +43,9 @@ class MasterItemsController extends Controller
             $item = [];
         } else {
             $item = MasterItem::with('category')->find($id);
+            if (!$item) {
+                return redirect('master-items');
+            }
         }
 
         $data['categories'] = Category::all();
@@ -55,6 +58,9 @@ class MasterItemsController extends Controller
     public function singleView($kode)
     {
         $data['data'] = MasterItem::with('category')->where('kode', $kode)->first();
+        if (!$data['data']) {
+            return redirect('master-items');
+        }
         return view('master_items.single.index', $data);
     }
 
@@ -75,13 +81,22 @@ class MasterItemsController extends Controller
             }
             $path = null;
             if ($request->hasFile('photo')) {
+                $request->validate([
+                    'photo'  => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+                ]);
                 $path = $request->file('photo')->store('items', 'public');
                 $data_item->photo = $path;
             }
         } else {
             $data_item = MasterItem::find($id);
+            if (!$data_item) {
+                return redirect('master-items');
+            }
             $kode = $data_item->kode;
             if ($request->hasFile('photo')) {
+                $request->validate([
+                    'photo'  => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+                ]);
                 if ($data_item->photo && Storage::disk('public')->exists($data_item->photo)) {
                     Storage::disk('public')->delete($data_item->photo);
                 }
@@ -109,6 +124,9 @@ class MasterItemsController extends Controller
     public function delete($id)
     {
         $item = MasterItem::find($id);
+        if (!$item) {
+            return redirect('master-items');
+        }
         if ($item->photo && Storage::disk('public')->exists($item->photo)) {
             Storage::disk('public')->delete($item->photo);
             # code...
